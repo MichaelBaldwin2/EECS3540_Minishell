@@ -26,6 +26,15 @@ std::vector<std::string> SplitString(std::string str, char delimiter)
         return subString;
     }
 
+    // Trim end of string delimitors
+    for(auto i = str.size() - 1; i >= 0; i--)
+    {
+        if(str[i] == delimiter)
+            str.pop_back();
+        else
+            break;        
+    }
+
     auto tempStr = std::string();
     auto subStrings = std::vector<std::string>();
 
@@ -85,7 +94,10 @@ bool RunCommand(std::vector<std::string> args)
         {
             auto resUsage = rusage();
             wait4(pid, &status, WUNTRACED, &resUsage); // Wait for the child process to finish
-            std::cout << "Status: " << status << " - SysTime: " << resUsage.ru_stime.tv_sec << " - UserTime: " << resUsage.ru_utime.tv_sec << std::endl;
+            std::cout << "---Resource Usage---" << std::endl;
+            std::cout << "Status: " << status << std::endl;
+            std::cout << "Time: " << resUsage.ru_stime.tv_usec + resUsage.ru_utime.tv_usec << "us" << std::endl;
+            std::cout << "--------------------" << std::endl;
         } while (!WIFEXITED(status) && !WIFSIGNALED(status)); // Check the status of the child process
     }
 
@@ -108,7 +120,12 @@ int main(int argc, char **argv)
         {
             auto aliasCmds = std::string();
             for (auto i = 2; i < args.size(); i++)
-                aliasCmds += args[i];
+            {
+                if(i == args.size() - 1)
+                    aliasCmds += args[i];
+                else
+                    aliasCmds += args[i] + " ";
+            }
             aliases[args[1]] = aliasCmds;
         }
         else if (args[0] == "exit")
