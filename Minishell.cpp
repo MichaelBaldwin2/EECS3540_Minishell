@@ -1,3 +1,5 @@
+// Written by: Michael Baldwin -- Last edit:03/03/2020
+
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -83,8 +85,8 @@ bool RunCommand(std::vector<std::string> args)
         // Call exec to have the child process take over
         if (execvp(args[0].c_str(), charVec.data()) == -1)
         {
-            std::cout << "Error with exec" << std::endl;
-            std::cout << args[0] << args[1] << std::endl;
+            std::cout << "command not found" << std::endl;
+            exit(0);
         }
         exit(EXIT_FAILURE);
     }
